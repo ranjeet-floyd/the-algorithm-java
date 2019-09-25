@@ -17,9 +17,16 @@ public class MaxSubArray {
         Triplet<Integer, Integer, Integer> triplet = divideNConquer.findMaxSubArray(arr, 0, arr.length - 1);
         assert expectedOutput != triplet.getValue0() : "Result is not Correct | Expected " + expectedOutput
                 + " and Actual result : " + triplet.getValue0();
-        System.out.println("Result Max Sub Array " + triplet);
+        System.out.println("Using DivideNConquer | Result Max Sub Array " + triplet);
+
+        LinearTime linearTime = new LinearTime();
+        Triplet<Integer, Integer, Integer> maxArraySum = linearTime.maxSubArraySum(arr, 0, arr.length - 1);
+        assert expectedOutput != maxArraySum.getValue0() : "LinearTime | Result is not Correct | Expected "
+                + expectedOutput + " and Actual result : " + maxArraySum;
+        System.out.println("Using LinearTime | Result Max Sub Array " + maxArraySum);
     }
 
+    // Divide N Conquer takes O(NlogN) time
     public static class DivideNConquer {
         /**
          * Solution of max sub-Array using Divide and conquer. Idea is to divide arr in
@@ -105,4 +112,48 @@ public class MaxSubArray {
         }
     }
 
+    // Kadane's algorithm takes O(N) time
+
+    public static class LinearTime {
+        /**
+         * Non-recursive, linear time algorithm for max-sub array. <br/>
+         * Start at the left end of the array and progress towards the right, keeping
+         * track of the maximum subArray seen so far. <br/>
+         */
+        // int[] arr = { 13, -3, -25, 20, -3, -16, -23, 18, 20, -7, 12, -5, -22, 15, -4,
+        // 7 };
+        Triplet<Integer, Integer, Integer> maxSubArraySum(int[] arr, int low, int high) {
+            if (low == high) {
+                return Triplet.with(arr[low], low, high);
+            }
+            int maxSumArraySoFar = arr[low];
+            int sum = 0;
+            int lowIndexSoFar = low;
+            int highIndexSoFar = low;
+            int lowIndex = low;
+            int highIndex = low;
+
+            for (int i = low; i <= high; i++) {
+                sum = sum + arr[i];
+                if (sum > maxSumArraySoFar) {
+                    maxSumArraySoFar = sum;
+                    lowIndexSoFar = lowIndex;
+                    highIndexSoFar = highIndex;
+                }
+
+                // reset sum, to start fresh
+                if (sum < 0) {
+                    sum = 0;
+                    lowIndex = i + 1;
+                    highIndex = i + 1;
+                } else {
+                    highIndex++;
+                }
+
+            }
+            return Triplet.with(maxSumArraySoFar, lowIndexSoFar, highIndexSoFar);
+
+        }
+
+    }
 }
